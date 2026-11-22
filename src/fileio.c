@@ -184,3 +184,98 @@ int load_books(const char *path, Book **b, int *n) {
     }
     return 1;
 }
+
+int load_accounts(const char *path, Account **acc, int *n) {
+    FILE *fp = fopen(path, "r");
+    if (!fp) return 0;
+
+    int cap = 32;
+    int count = 0;
+    Account *arr = malloc((size_t)cap * sizeof(Account));
+    if (!arr) {
+        fclose(fp);
+        return 0;
+    }
+
+    Account temp;
+    while (fscanf(fp, "%31s %31s %11s", temp.username, temp.password, temp.role) == 3) {
+        if (count >= cap) {
+            int new_cap = cap * 2;
+            Account *tmp_arr = realloc(arr, (size_t)new_cap * sizeof(Account));
+            if (!tmp_arr) {
+                free(arr);
+                fclose(fp);
+                return 0;
+            }
+            arr = tmp_arr;
+            cap = new_cap;
+        }
+        arr[count++] = temp;
+    }
+
+    fclose(fp);
+    *acc = arr;
+    *n = count;
+    return 1;
+}
+
+int load_loans(const char *path, Loan **loans, int *n) {
+    FILE *fp = fopen(path, "r");
+    if (!fp) {
+        *loans = NULL;
+        *n = 0;
+        return 1;
+    }
+
+    int cap = 64;
+    int count = 0;
+    Loan *arr = malloc((size_t)cap * sizeof(Loan));
+    if (!arr) {
+        fclose(fp);
+        return 0;
+    }
+
+    Loan temp;
+    while (fscanf(fp, "%u %31s %63s %19s %19s",
+                  &temp.id_peminjaman, temp.username, temp.ocaid,
+                  temp.tanggal_pinjam, temp.status) == 5) {
+        if (count >= cap) {
+            int new_cap = cap * 2;
+            Loan *tmp_arr = realloc(arr, (size_t)new_cap * sizeof(Loan));
+            if (!tmp_arr) {
+                free(arr);
+                fclose(fp);
+                return 0;
+            }
+            arr = tmp_arr;
+            cap = new_cap;
+        }
+        arr[count++] = temp;
+    }
+
+    fclose(fp);
+    *loans = arr;
+    *n = count;
+    return 1;
+}
+
+int save_loans(const char *path, const Loan *loans, int n) {
+    char tmp_path[512];
+    snprintf(tmp_path, sizeof(tmp_path), "%s.tmp", path);
+
+    FILE *fp = fopen(tmp_path, "w");
+    if (!fp) return 0;
+
+    for (int i = 0; i < n; i++) {
+        fprintf(fp, "%u %s %s %s %s\n",
+                loans[i].id_peminjaman, loans[i].username, loans[i].ocaid,
+                loans[i].tanggal_pinjam, loans[i].status);
+    }
+
+    fclose(fp);
+    remove(path);
+    if (rename(tmp_path, path) != 0) {
+        return 0;
+    }
+    return 1;
+}
