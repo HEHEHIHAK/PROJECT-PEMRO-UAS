@@ -65,3 +65,14 @@ int read_int(const char *prompt, int min, int max, int *out) {
         return 1;
     }
 }
+
+void get_today(char *buf, size_t size) {
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
+    if (t) {
+        strftime(buf, size, "%d-%m-%Y", t);
+    } else if (size > 0) {
+        strncpy(buf, "01-01-2026", size - 1);
+        buf[size - 1] = '\0';
+    }
+}   
