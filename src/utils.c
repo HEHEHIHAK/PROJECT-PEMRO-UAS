@@ -18,3 +18,25 @@ void str_trim(char *s) {
     memmove(s, start, len);
     s[len] = '\0';
 }
+
+int read_line(const char *prompt, char *buf, size_t size) {
+    if (prompt) {
+        printf("%s", prompt);
+        fflush(stdout);
+    }
+    if (!fgets(buf, (int)size, stdin)) {
+        return 0;
+    }
+    size_t len = strlen(buf);
+    if (len > 0 && buf[len - 1] == '\n') {
+        buf[len - 1] = '\0';
+        if (len > 1 && buf[len - 2] == '\r') {
+            buf[len - 2] = '\0';
+        }
+    } else {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF);
+    }
+    str_trim(buf);
+    return 1;
+}
