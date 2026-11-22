@@ -80,3 +80,39 @@ int parse_book_line(const char *line, Book *out, int has_stock) {
     }
     return 1;
 }
+
+static void write_escaped_field(FILE *fp, const char *s) {
+    fputc('"', fp);
+    for (const char *p = s; *p; p++) {
+        if (*p == '"') {
+            fputs("\"\"", fp);
+        } else {
+            fputc(*p, fp);
+        }
+    }
+    fputc('"', fp);
+}
+
+int save_books(const char *path, const Book *b, int n) {
+    char tmp_path[512];
+    snprintf(tmp_path, sizeof(tmp_path), "%s.tmp", path);
+
+    FILE *fp = fopen(tmp_path, "w");
+    if (!fp) return 0;
+
+    fprintf(fp, "ocaid title author year page_count stok\n");
+    for (int i = 0; i < n; i++) {
+        fprintf(fp, "%s ", b[i].ocaid);
+        write_escaped_field(fp, b[i].title);
+        fputc(' ', fp);
+        write_escaped_field(fp, b[i].author);
+        fprintf(fp, " %d %d %d\n", b[i].year, b[i].page_count, b[i].stok);
+    }
+
+    fclose(fp);
+    remove(path);
+    if (rename(tmp_path, path) != 0) {
+        return 0;
+    }
+    return 1;
+}
