@@ -116,3 +116,71 @@ int save_books(const char *path, const Book *b, int n) {
     }
     return 1;
 }
+
+int load_books(const char *path, Book **b, int *n) {
+    int from_master = 0;
+    FILE *fp = fopen(path, "r");
+    if (!fp) {
+        fp = fopen("data/Books.txt", "r");
+        if (!fp) fp = fopen("Books.txt", "r");
+        if (!fp) return 0;
+        from_master = 1;
+    }
+
+    int cap = 1024;
+    int count = 0;
+    Book *arr = malloc((size_t)cap * sizeof(Book));
+    if (!arr) {
+        fclose(fp);
+        return 0;
+    }
+
+    char line[4096];
+    int line_num = 0;
+    int has_stock = !from_master;
+
+    while (fgets(line, sizeof(line), fp)) {
+        line_num++;
+        if (line_num == 1 && strncmp(line, "ocaid", 5) == 0) {
+            has_stock = (strstr(line, "stok") != NULL);
+            continue;
+        }
+
+        Book temp;
+        if (!parse_book_line(line, &temp, has_stock)) {
+            continue;
+        }
+
+        int dup = 0;
+        for (int i = 0; i < count; i++) {
+            if (strcmp(arr[i].ocaid, temp.ocaid) == 0) {
+                fprintf(stderr, "Peringatan: ocaid duplikat '%s' dilewati (baris %d).\n", temp.ocaid, line_num);
+                dup = 1;
+                break;
+            }
+        }
+        if (dup) continue;
+
+        if (count >= cap) {
+            int new_cap = cap * 2;
+            Book *tmp_arr = realloc(arr, (size_t)new_cap * sizeof(Book));
+            if (!tmp_arr) {
+                free(arr);
+                fclose(fp);
+                return 0;
+            }
+            arr = tmp_arr;
+            cap = new_cap;
+        }
+        arr[count++] = temp;
+    }
+
+    fclose(fp);
+    *b = arr;
+    *n = count;
+
+    if (from_master) {
+        save_books(path, arr, count);
+    }
+    return 1;
+}
