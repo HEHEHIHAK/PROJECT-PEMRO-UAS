@@ -3,9 +3,9 @@
 
 #include "models.h"
 
-int pinjam_buku(Book *b, int n_book, Loan **loans, int *n_loan, const char *username, const char *book_path, const char *loan_path);
-int kembalikan_buku(Book *b, int n_book, Loan *loans, int n_loan, const char *username, const char *book_path, const char *loan_path);
-void lihat_peminjaman_pribadi(const Loan *loans, int n_loan, const Book *b, int n_book, const char *username);
-void laporan_transaksi_admin(const Loan *loans, int n_loan, const Book *b, int n_book);
+int borrow_book(Book *b, int n, Loan **loans, int *lc, const char *username);
+int return_book(Book *b, int n, Loan **loans, int *lc, const char *username);
+int show_my_loans(const Loan *loans, int lc, const char *username);
+int show_all_loans(const Loan *loans, int lc);
 
-#endif
+#endif 
