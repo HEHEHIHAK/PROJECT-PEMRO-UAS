@@ -75,4 +75,14 @@ void get_today(char *buf, size_t size) {
         strncpy(buf, "01-01-2026", size - 1);
         buf[size - 1] = '\0';
     }
-}   
+}
+
+unsigned int next_loan_id(const Loan *loans, int n) {
+    unsigned int max_id = 0;
+    for (int i = 0; i < n; i++) {
+        if (loans[i].id_peminjaman > max_id) {
+            max_id = loans[i].id_peminjaman;
+        }
+    }
+    return max_id + 1;
+}
