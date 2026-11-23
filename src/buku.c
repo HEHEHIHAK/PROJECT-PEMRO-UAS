@@ -79,7 +79,7 @@ static int lanjut(void) {
 }
 
 static int simpan(const Book *b, int n, const char *path) {
-    if (save_books(path, b, n) != 0) {
+    if (save_books(path, b, n) == 0) {
         printf("PERINGATAN: data gagal disimpan ke file!\n");
         return -1;
     }
