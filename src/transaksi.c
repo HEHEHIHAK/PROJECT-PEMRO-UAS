@@ -6,7 +6,7 @@
 #include "../include/buku.h"
 #include "../include/fileio.h"
 #include "../include/utils.h"
-#include "buku.h"
+
 
 /* Fungsi untuk memproses peminjaman buku */
 int borrow_book(Book *b, int n, Loan **loans, int *lc,
@@ -74,9 +74,8 @@ int borrow_book(Book *b, int n, Loan **loans, int *lc,
 
     b[index].stok--;
 
-    if (save_books("data/books_data.txt", b, n) != 0 ||
-        save_loans("data/peminjaman.txt", *loans, *lc) != 0) {
-
+    if (save_books("data/books_data.txt", b, n) == 0 ||
+        save_loans("data/peminjaman.txt", *loans, *lc) == 0) {
         b[index].stok++;
         (*lc)--;
 
