@@ -282,7 +282,7 @@ int hapus_buku(Book *b, int *n, const char *path) {
         return -1;
     }
 
-    if (load_loans(LOANS_FILE, &loans, &jumlah_loan) != 0) {
+    if (load_loans(LOANS_FILE, &loans, &jumlah_loan) == 0) {
         jumlah_loan = 0;
     }
     for (i = 0; loans != NULL && i < jumlah_loan; i++) {
