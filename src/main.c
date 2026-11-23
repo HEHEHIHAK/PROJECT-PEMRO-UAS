@@ -3,25 +3,43 @@
 #include <string.h>
 #include "../include/models.h"
 #include "../include/sorting.h"
+#include "../include/buku.h"
+#include "../include/fileio.h"
+#include "../include/transaksi.h"
+
+// Sesuaikan nama file .txt dengan isi folder data/ kalian
+#define BOOKS_FILE "data/books_data.txt"
+#define LOANS_FILE "data/loans_data.txt"
 
 // Deklarasi fungsi login yang sudah kamu buat sebelumnya
 int login(char username[], char role[]);
 
 // Prototipe fungsi menu navigasi
-void menu_admin(Book *books, int n_books);
-void menu_user(Book *books, int n_books, const char *username);
+void menu_admin(Book **books, int *n_books, Loan **loans, int *n_loans);
+void menu_user(Book *books, int n_books, Loan **loans, int *n_loans, const char *username);
 
 int main(void) {
     char current_user[32] = "";
     char current_role[12] = "";
 
-    // Data dummy buku untuk uji coba menu dan sorting sebelum modul Gibran digabung
-    Book books[3] = {
-        {"BK001", "Algoritma Pemrograman C", "Penulis A", 2021, 350, 5},
-        {"BK002", "Struktur Data Lanjut", "Penulis B", 2019, 420, 2},
-        {"BK003", "Sistem Basis Data", "Penulis C", 2023, 210, 4}
-    };
-    int n_books = 3;
+    Book *books = NULL;
+    int n_books = 0;
+
+    Loan *loans = NULL;
+    int n_loans = 0;
+
+    // 1. Muat data buku dari file .txt (Modul File I/O)
+    if (!load_books(BOOKS_FILE, &books, &n_books) || n_books == 0) {
+        // Cadangan otomatis jika nama filenya books.txt
+        load_books("data/books.txt", &books, &n_books);
+    }
+
+    // 2. Muat data peminjaman dari file .txt
+    if (!load_loans(LOANS_FILE, &loans, &n_loans)) {
+        load_loans("data/loans.txt", &loans, &n_loans);
+    }
+
+    printf("[Info] Berhasil memuat %d buku dan %d data peminjaman.\n", n_books, n_loans);
 
     int running = 1;
     while (running) {
@@ -34,22 +52,21 @@ int main(void) {
 
         int opsi = -1;
         if (scanf("%d", &opsi) != 1) {
-            while (getchar() != '\n'); // Bersihkan buffer input
+            while (getchar() != '\n');
             continue;
         }
+        while (getchar() != '\n'); // Bersihkan sisa Enter
 
         if (opsi == 0) {
             printf("\nTerima kasih telah menggunakan sistem perpustakaan.\n");
             running = 0;
             break;
         } else if (opsi == 1) {
-            // Jalankan fungsi login milikmu
             if (login(current_user, current_role)) {
-                // Percabangan hak akses berdasarkan role
                 if (strcmp(current_role, "admin") == 0) {
-                    menu_admin(books, n_books);
+                    menu_admin(&books, &n_books, &loans, &n_loans);
                 } else if (strcmp(current_role, "user") == 0) {
-                    menu_user(books, n_books, current_user);
+                    menu_user(books, n_books, &loans, &n_loans, current_user);
                 } else {
                     printf("Role tidak dikenal!\n");
                 }
@@ -61,13 +78,15 @@ int main(void) {
         }
     }
 
+    free(books);
+    free(loans);
     return 0;
 }
 
 // -------------------------------------------------------------
 // 1. MENU NAVIGASI ADMIN (PUSTAKAWAN)
 // -------------------------------------------------------------
-void menu_admin(Book *books, int n_books) {
+void menu_admin(Book **books, int *n_books, Loan **loans, int *n_loans) {
     int pilihan = -1;
     while (pilihan != 0) {
         printf("\n=====================================\n");
@@ -89,30 +108,29 @@ void menu_admin(Book *books, int n_books) {
             printf("Input harus berupa angka!\n");
             continue;
         }
+        while (getchar() != '\n'); // Bersihkan sisa Enter sebelum masuk ke fungsi modul
 
         switch (pilihan) {
             case 1:
-                printf("\n[Fitur Modul Dwi: Menampilkan seluruh katalog]\n");
+                tampilkan_katalog(*books, *n_books, 0);
                 break;
             case 2:
-                // Memanggil fungsi modul sorting milikmu
-                // only_available = 0 (karena Admin melihat semua buku termasuk stok 0)
-                sort_menu(books, n_books, 0);
+                sort_menu(*books, *n_books, 0);
                 break;
             case 3:
-                printf("\n[Fitur Modul Dwi: Pencarian buku]\n");
+                cari_buku(*books, *n_books);
                 break;
             case 4:
-                printf("\n[Fitur Modul Dwi: Menambahkan buku baru]\n");
+                tambah_buku(books, n_books, BOOKS_FILE);
                 break;
             case 5:
-                printf("\n[Fitur Modul Dwi: Memperbarui buku/stok]\n");
+                update_buku(*books, *n_books, BOOKS_FILE);
                 break;
             case 6:
-                printf("\n[Fitur Modul Dwi: Menghapus buku]\n");
+                hapus_buku(*books, n_books, BOOKS_FILE);
                 break;
             case 7:
-                printf("\n[Fitur Modul Azna: Laporan transaksi peminjaman]\n");
+                show_all_loans(*loans, *n_loans);
                 break;
             case 0:
                 printf("\nBerhasil logout dari akun Admin.\n");
@@ -126,7 +144,7 @@ void menu_admin(Book *books, int n_books) {
 // -------------------------------------------------------------
 // 2. MENU NAVIGASI USER (MAHASISWA/ANGGOTA)
 // -------------------------------------------------------------
-void menu_user(Book *books, int n_books, const char *username) {
+void menu_user(Book *books, int n_books, Loan **loans, int *n_loans, const char *username) {
     int pilihan = -1;
     while (pilihan != 0) {
         printf("\n=====================================\n");
@@ -147,27 +165,30 @@ void menu_user(Book *books, int n_books, const char *username) {
             printf("Input harus berupa angka!\n");
             continue;
         }
+        while (getchar() != '\n'); // Bersihkan sisa Enter sebelum masuk ke fungsi modul
 
         switch (pilihan) {
             case 1:
-                printf("\n[Fitur Modul Dwi: Menampilkan katalog buku yang tersedia (stok > 0)]\n");
+                tampilkan_katalog(books, n_books, 1);
                 break;
             case 2:
-                // Memanggil fungsi modul sorting milikmu
-                // only_available = 1 (User hanya melihat buku yang tersedia)
                 sort_menu(books, n_books, 1);
                 break;
             case 3:
-                printf("\n[Fitur Modul Dwi: Pencarian buku]\n");
+                cari_buku(books, n_books);
                 break;
             case 4:
-                printf("\n[Fitur Modul Azna: Peminjaman buku]\n");
+                borrow_book(books, n_books, loans, n_loans, username);
+                save_books(BOOKS_FILE, books, n_books);
+                save_loans(LOANS_FILE, *loans, *n_loans);
                 break;
             case 5:
-                printf("\n[Fitur Modul Azna: Pengembalian buku]\n");
+                return_book(books, n_books, loans, n_loans, username);
+                save_books(BOOKS_FILE, books, n_books);
+                save_loans(LOANS_FILE, *loans, *n_loans);
                 break;
             case 6:
-                printf("\n[Fitur Modul Azna: Riwayat pinjaman aktif user]\n");
+                show_my_loans(*loans, *n_loans, username);
                 break;
             case 0:
                 printf("\nBerhasil logout dari akun User.\n");
