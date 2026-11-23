@@ -3,10 +3,17 @@
 
 #include "models.h"
 
-/* attr: 1=ocaid, 2=title, 3=year, 4=page_count, 5=stok | asc: 1=Ascending, 0=Descending */
-void bubble_sort_books(Book *b, int n, int attr, int asc);
-void selection_sort_books(Book *b, int n, int attr, int asc);
-void insertion_sort_books(Book *b, int n, int attr, int asc);
-void menu_sorting_katalog(Book *b, int n);
+// Definisi enum untuk kunci sorting (jika belum ada)
+typedef enum {
+    SORT_ID = 0,
+    SORT_TITLE,
+    SORT_AUTHOR,
+    SORT_YEAR
+} SortKey;
+
+// Prototipe fungsi sorting
+void sort_menu(Book *books, int n, int is_admin);
+void bubble_sort(Book *arr, int n, SortKey key, int asc);
+// Tambahkan prototipe sorting lainnya jika ada (selection/insertion)
 
 #endif
