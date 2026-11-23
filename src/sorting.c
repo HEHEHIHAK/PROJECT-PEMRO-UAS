@@ -7,7 +7,7 @@
 #include "../include/sorting.h"
 
 // Deklarasi fungsi katalog dari modul Dwi (buku.h)
-extern void show_catalog(const Book *b, int n, int only_available);
+extern void tampilkan_katalog(const Book *b, int n, int only_available);
 
 /* --- 1. KOMPARATOR --- */
 
