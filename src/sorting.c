@@ -5,6 +5,7 @@
 #include <time.h>
 #include "../include/models.h"
 #include "../include/sorting.h"
+#include "buku.h"
 
 // Deklarasi fungsi katalog dari modul Dwi (buku.h)
 
