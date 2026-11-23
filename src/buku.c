@@ -16,7 +16,13 @@ static int baca_teks(const char *prompt, char *buf, int ukuran) {
         buf[0] = '\0';
         return 0;
     }
-    buf[strcspn(buf, "\n")] = '\0';
+        if (strchr(buf, '\n') != NULL) {
+        buf[strcspn(buf, "\n")] = '\0';
+    } else {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {
+        }
+    }
     return 1;
 }
 
