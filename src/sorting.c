@@ -7,7 +7,7 @@
 #include "../include/sorting.h"
 
 // Deklarasi fungsi katalog dari modul Dwi (buku.h)
-extern void tampilkan_katalog(salinan, n, only_available);
+
 /* --- 1. KOMPARATOR --- */
 
 // Pembanding judul case-insensitive agar tidak terpengaruh huruf besar/kecil
@@ -126,7 +126,7 @@ void sort_menu(const Book *b, int n, int only_available) {
     printf("Pengurutan selesai dalam waktu: %.4f detik.\n\n", waktu_detik);
 
     // Tampilkan hasil pengurutan
-    show_catalog(salinan, n, only_available);
+    tampilkan_katalog(salinan, n, only_available);
 
     // Bebaskan memori salinan
     free(salinan);
