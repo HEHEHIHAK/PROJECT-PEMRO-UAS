@@ -199,6 +199,8 @@ int tambah_buku(Book **b, int *n, const char *path) {
     i = simpan(*b, *n, path);
     if (i == 0) {
         printf("Buku berhasil ditambahkan.\n");
+    }  else {
+        (*n)--;
     }
     return i;
 }
