@@ -9,5 +9,6 @@ int tambah_buku(Book **b, int *n, const char *path);
 int update_buku(Book *b, int n, const char *path);
 int hapus_buku(Book *b, int *n, const char *path);
 int cari_index_ocaid(const Book *b, int n, const char *ocaid);
+int find_book_index(const Book *b, int n, const char *ocaid);
 
 #endif

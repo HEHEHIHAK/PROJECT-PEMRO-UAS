@@ -6,6 +6,7 @@
 #include "../include/buku.h"
 #include "../include/fileio.h"
 #include "../include/utils.h"
+#include "buku.h"
 
 /* Fungsi untuk memproses peminjaman buku */
 int borrow_book(Book *b, int n, Loan **loans, int *lc,
