@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../include/login.h"
+#include "auth.h"
 
 int login(char username[], char role[]) {
     char inputUser[32];
