@@ -91,3 +91,74 @@ int borrow_book(Book *b, int n, Loan **loans, int *lc,
 
     return 0;
 }
+
+int return_book(Book *b, int n, Loan **loans, int *lc, const char *username) {
+    unsigned int id;
+    printf("\n=== PENGEMBALIAN BUKU ===\n");
+    printf("Masukkan ID Peminjaman yang ingin dikembalikan: ");
+    if (scanf("%u", &id) != 1) {
+        while (getchar() != '\n');
+        printf("ID tidak valid!\n");
+        return 0;
+    }
+    while (getchar() != '\n');
+
+    for (int i = 0; i < *lc; i++) {
+        if ((*loans)[i].id_peminjaman == id &&
+            strcmp((*loans)[i].username, username) == 0 &&
+            (strcmp((*loans)[i].status, "DIPINJAM") == 0 || strcmp((*loans)[i].status, "Dipinjam") == 0)) {
+            
+            strcpy((*loans)[i].status, "DIKEMBALIKAN");
+            for (int j = 0; j < n; j++) {
+                if (strcmp(b[j].ocaid, (*loans)[i].ocaid) == 0) {
+                    b[j].stok++;
+                    break;
+                }
+            }
+
+            // Simpan perubahan ke file teks secara otomatis
+            save_books("data/books_data.txt", b, n);
+            save_loans("data/peminjaman.txt", *loans, *lc);
+
+            printf("Buku dengan ID Peminjaman %u berhasil dikembalikan!\n", id);
+            return 1;
+        }
+    }
+    printf("Data peminjaman aktif tidak ditemukan.\n");
+    return 0;
+}
+
+int show_my_loans(const Loan *loans, int lc, const char *username) {
+    int found = 0;
+    printf("\n=== DAFTAR PINJAMAN SAYA (%s) ===\n", username);
+    printf("%-5s | %-15s | %-15s | %-15s\n", "ID", "ID Buku", "Tgl Pinjam", "Status");
+    printf("------------------------------------------------------------\n");
+    for (int i = 0; i < lc; i++) {
+        if (strcmp(loans[i].username, username) == 0) {
+            printf("%-5u | %-15s | %-15s | %-15s\n",
+                   loans[i].id_peminjaman, loans[i].ocaid,
+                   loans[i].tanggal_pinjam, loans[i].status);
+            found = 1;
+        }
+    }
+    if (!found) {
+        printf("Belum ada riwayat peminjaman.\n");
+    }
+    return found;
+}
+
+int show_all_loans(const Loan *loans, int lc) {
+    printf("\n=== LAPORAN SELURUH TRANSAKSI PEMINJAMAN ===\n");
+    if (lc == 0) {
+        printf("Belum ada data transaksi peminjaman.\n");
+        return 0;
+    }
+    printf("%-5s | %-15s | %-15s | %-15s | %-15s\n", "ID", "Username", "ID Buku", "Tgl Pinjam", "Status");
+    printf("---------------------------------------------------------------------------\n");
+    for (int i = 0; i < lc; i++) {
+        printf("%-5u | %-15s | %-15s | %-15s | %-15s\n",
+               loans[i].id_peminjaman, loans[i].username, loans[i].ocaid,
+               loans[i].tanggal_pinjam, loans[i].status);
+    }
+    return 1;
+}

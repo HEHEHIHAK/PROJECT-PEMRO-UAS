@@ -9998,3 +9998,4 @@ intermediatetext00pettrich "An intermediate textbook of physiological chemistry 
 abolitionofpover00hollrich "The abolition of poverty" "Hollander, Jacob Harry, 1871-1940" 1914 140 3
 afterwhiles00rileiala "Afterwhiles," "Riley, James Whitcomb, 1849-1916" 1892 192 3
 addresse00rejectedsmitrich "Rejected addresses, and other poems" "Smith, James, 1775-1839; Smith, Horace, 1779-1849; Sargent, Epes, 1813-1880" 1856 462 3
+4 "2" "3" 2 3 2
