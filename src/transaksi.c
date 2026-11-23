@@ -23,7 +23,7 @@ int borrow_book(Book *b, int n, Loan **loans, int *lc,
         return 1;
     }
 
-    index = find_book_index(b, n, ocaid);
+    index = cari_index_ocaid(b, n, ocaid);
 
     if (index == -1) {
         printf("Buku tidak ditemukan.\n");
