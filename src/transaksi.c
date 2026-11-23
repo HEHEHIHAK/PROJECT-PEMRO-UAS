@@ -62,8 +62,8 @@ int borrow_book(Book *b, int n, Loan **loans, int *lc,
     snprintf(new_loan.ocaid, sizeof(new_loan.ocaid),
              "%s", ocaid);
 
-    snprintf(new_loan.tanggal_pinjam,
-             sizeof(new_loan.tanggal_pinjam), "%s", get_today());
+    get_today(new_loan.tanggal_pinjam,
+             sizeof(new_loan.tanggal_pinjam));
 
     snprintf(new_loan.status, sizeof(new_loan.status),
              "%s", "DIPINJAM");
