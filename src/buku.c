@@ -16,7 +16,13 @@ static int baca_teks(const char *prompt, char *buf, int ukuran) {
         buf[0] = '\0';
         return 0;
     }
-    buf[strcspn(buf, "\n")] = '\0';
+        if (strchr(buf, '\n') != NULL) {
+        buf[strcspn(buf, "\n")] = '\0';
+    } else {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {
+        }
+    }
     return 1;
 }
 
@@ -79,7 +85,7 @@ static int lanjut(void) {
 }
 
 static int simpan(const Book *b, int n, const char *path) {
-    if (save_books(path, b, n) != 0) {
+    if (save_books(path, b, n) == 0) {
         printf("PERINGATAN: data gagal disimpan ke file!\n");
         return -1;
     }
@@ -199,6 +205,8 @@ int tambah_buku(Book **b, int *n, const char *path) {
     i = simpan(*b, *n, path);
     if (i == 0) {
         printf("Buku berhasil ditambahkan.\n");
+    }  else {
+        (*n)--;
     }
     return i;
 }
@@ -282,7 +290,7 @@ int hapus_buku(Book *b, int *n, const char *path) {
         return -1;
     }
 
-    if (load_loans(LOANS_FILE, &loans, &jumlah_loan) != 0) {
+    if (load_loans(LOANS_FILE, &loans, &jumlah_loan) == 0) {
         jumlah_loan = 0;
     }
     for (i = 0; loans != NULL && i < jumlah_loan; i++) {
