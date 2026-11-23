@@ -3,17 +3,17 @@
 
 #include "models.h"
 
-// Definisi enum untuk kunci sorting (jika belum ada)
+// Gunakan konstanta key sesuai yang dipakai di sorting.c
 typedef enum {
-    SORT_ID = 0,
-    SORT_TITLE,
-    SORT_AUTHOR,
-    SORT_YEAR
+    KEY_OCAID = 0,
+    KEY_TITLE,
+    KEY_YEAR,
+    KEY_PAGES,
+    KEY_STOCK
 } SortKey;
 
-// Prototipe fungsi sorting
-void sort_menu(Book *books, int n, int is_admin);
+// Samakan parameter sort_menu menjadi (const Book *b, int n, int only_available)
+void sort_menu(const Book *b, int n, int only_available);
 void bubble_sort(Book *arr, int n, SortKey key, int asc);
-// Tambahkan prototipe sorting lainnya jika ada (selection/insertion)
 
 #endif
