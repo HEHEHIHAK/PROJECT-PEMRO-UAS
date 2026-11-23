@@ -1,0 +1,3 @@
+admin admin123 admin
+andy andy123 user
+gibran gibran123 user
