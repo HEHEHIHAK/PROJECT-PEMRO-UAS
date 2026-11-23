@@ -3,10 +3,17 @@
 
 #include "models.h"
 
-/* attr: 1=ocaid, 2=title, 3=year, 4=page_count, 5=stok | asc: 1=Ascending, 0=Descending */
-void bubble_sort_books(Book *b, int n, int attr, int asc);
-void selection_sort_books(Book *b, int n, int attr, int asc);
-void insertion_sort_books(Book *b, int n, int attr, int asc);
-void menu_sorting_katalog(Book *b, int n);
+// Enum atribut yang diurutkan
+typedef enum {
+    KEY_OCAID,
+    KEY_TITLE,
+    KEY_YEAR,
+    KEY_PAGES,
+    KEY_STOCK
+} SortKey;
+
+// Fungsi bubble sort dan menu sorting
+void bubble_sort(Book *arr, int n, SortKey key, int asc);
+void sort_menu(const Book *b, int n, int only_available);
 
 #endif
