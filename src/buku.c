@@ -7,7 +7,7 @@
 #include "buku.h"
 #include "fileio.h"
 
-#define PER_HALAMAN 20
+#define PER_HALAMAN 5
 #define LOANS_FILE  "data/peminjaman.txt"
 
 static int baca_teks(const char *prompt, char *buf, int ukuran) {
@@ -16,7 +16,7 @@ static int baca_teks(const char *prompt, char *buf, int ukuran) {
         buf[0] = '\0';
         return 0;
     }
-        if (strchr(buf, '\n') != NULL) {
+    if (strchr(buf, '\n') != NULL) {
         buf[strcspn(buf, "\n")] = '\0';
     } else {
         int c;
@@ -64,19 +64,24 @@ static int mengandung(const char *teks, const char *cari) {
 }
 
 static void cetak_buku(int no, const Book *buku) {
-    printf("%-4d %-22.22s %-40.40s %-20.20s %5d %5d %4d\n",
-           no, buku->ocaid, buku->title, buku->author,
-           buku->year, buku->page_count, buku->stok);
+    printf("----------------------------------------------------\n");
+    printf("No        : %d\n", no);
+    printf("ID (OCAID): %s\n", buku->ocaid);
+    printf("Judul     : %s\n", buku->title);
+    printf("Pengarang : %s\n", buku->author);
+    printf("Tahun     : %d\n", buku->year);
+    printf("Halaman   : %d\n", buku->page_count);
+    printf("Stok      : %d\n", buku->stok);
 }
 
 static void cetak_judul_kolom(void) {
-    printf("\n%-4s %-22s %-40s %-20s %5s %5s %4s\n",
-           "No", "ID", "Judul", "Pengarang", "Tahun", "Hal", "Stok");
+    printf("\n=================== DAFTAR BUKU ====================\n");
 }
 
 static int lanjut(void) {
     char jawab[16];
 
+    printf("----------------------------------------------------\n");
     printf("-- Enter = lanjut, q = berhenti : ");
     if (fgets(jawab, sizeof(jawab), stdin) == NULL || jawab[0] == 'q' || jawab[0] == 'Q') {
         return 0;
@@ -113,7 +118,8 @@ void tampilkan_katalog(const Book *b, int n, int hanya_tersedia) {
     if (tampil == 0) {
         printf("Tidak ada buku.\n");
     } else {
-        printf("\n%d buku ditampilkan.\n", tampil);
+        printf("====================================================\n");
+        printf("%d buku ditampilkan.\n", tampil);
     }
 }
 
@@ -160,7 +166,8 @@ void cari_buku(const Book *b, int n) {
     if (ketemu == 0) {
         printf("Buku tidak ditemukan.\n");
     } else {
-        printf("\n%d buku ditemukan.\n", ketemu);
+        printf("====================================================\n");
+        printf("%d buku ditemukan.\n", ketemu);
     }
 }
 
